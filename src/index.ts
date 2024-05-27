@@ -2,13 +2,14 @@ require("dotenv").config();
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import { errorRouter } from "./routes/error";
 import { notificationRouter } from "./routes/notification";
 import { userRouter } from "./routes/user";
 import { editController } from "./controllers/controller-builders/edit";
 import { editStreamController } from "./controllers/controller-builders/editStream";
 import { countController } from "./controllers/controller-builders/count";
 import { createController } from "./controllers/controller-builders/create";
+import { errorRouter } from "./routes/error";
+import { embeddingRouter } from "./routes/embeddingRouter";
 
 /* Setup */
 const app = express();
@@ -30,6 +31,7 @@ app.post("/api/:model/create", createController)
 app.use("/api/user", userRouter);
 app.use("/api/notification", notificationRouter);
 app.use("/api/error", errorRouter);
+app.use('/api/embedding', embeddingRouter);
 
 /* Listener */
 mongoose.connect(MONGO_URL);

@@ -17,4 +17,3 @@ const UserModel : Model<IUser> = model<IUser>('User', UserSchema);
 
 export default UserModel;
 
-export const createUser = (values: Record<string, any>) => new UserModel(values).save().then((user) => user.toObject());
