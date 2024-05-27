@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { generateEmbedding } from './../utils/embedding-generator';
+import { generateEmbedding } from '../utils/embedding-generator';
 
 export const createEmbedding = async (req: Request, res: Response, next: NextFunction) => {
     try {

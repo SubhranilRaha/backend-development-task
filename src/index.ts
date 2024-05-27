@@ -38,9 +38,9 @@ mongoose.connect(MONGO_URL);
 
 mongoose.connection.once("open", () => {
   console.log(`MongoDB connected successfully`);
-  app.listen(PORT, () => console.log(`Server started on PORT: ${PORT}`));
+  app.listen(PORT, () => console.log(`✅ Server started on PORT: ${PORT}`));
 });
 
 mongoose.connection.on("error", (error) => {
-  console.log("Mongoose connection error: " + error);
+  console.log("⚠️ Mongoose connection error: " + error);
 });
