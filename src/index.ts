@@ -44,3 +44,7 @@ mongoose.connection.once("open", () => {
 mongoose.connection.on("error", (error) => {
   console.log("⚠️ Mongoose connection error: " + error);
 });
+
+//manual controller
+import { seedBooks, fetchMovies } from "./controllers/_manualRunController";
+//fetchMovies();
