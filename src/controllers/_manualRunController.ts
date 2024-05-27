@@ -3,6 +3,8 @@ import { parse } from 'csv-parse';
 import { off } from "process";
 import { MovieModel } from "../models/movie.model";
 import dayjs from 'dayjs';
+import { generateEmbedding } from "../utils/embedding-generator";
+import { EmbeddingModel } from "../models/embedding.model";
 export const seedBooks = async () => {
     //read the file books.csv
 
@@ -137,7 +139,7 @@ export const fetchMovies = async () => {
   partial: false
 }*/
 
-    let offset = 2000;
+    let offset = 11000;
     const initialOffset = offset;
     const length = 100;
     let data = [] as any[];
@@ -182,4 +184,38 @@ export const fetchMovies = async () => {
         }
     }
 
+};
+
+export const syncEmbeddings = async () => {
+    try {
+        const limit = 2;
+        const movies = await MovieModel.find({
+            embedding: { $exists: false }
+        }).limit(limit).sort({
+            createdAt: -1
+        });
+        for (let i = 0; i < movies.length; i++) {
+            const movie = movies[i];
+            if (movie.overview) {
+                const embedding = await generateEmbedding(movie.overview);
+                if (embedding) {
+                    movie.embedding = embedding;
+                    await movie.save();
+
+                    //create embedding for the movie in the embedding model as well
+                    const existingEmbedding = await EmbeddingModel.findOne({ model: 'movie', objectId: movie._id });
+                    if (existingEmbedding) {
+                        await EmbeddingModel.updateOne({ model: 'movie', objectId: movie._id }, { plot_embedding_hf: embedding });
+                    } else {
+                        await EmbeddingModel.create({ model: 'movie', objectId: movie._id, plot_embedding_hf: embedding });
+                    }
+                    console.log("Updated embedding for movie")
+                }
+            } else {
+                console.log("IGNORING: Movie overview not found")
+            }
+        }
+    } catch (e) {
+        console.log(e)
+    }
 }

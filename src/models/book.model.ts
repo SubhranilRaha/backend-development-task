@@ -17,5 +17,5 @@ const schema = new Schema({
     image_url_l: { type: String }
 },
     { timestamps: true });
-export type Embedding = InferSchemaType<typeof schema>;
-export const EmbeddingModel = mongoose.model('embedding', schema);
+export type Book = InferSchemaType<typeof schema>;
+export const BookModel = mongoose.model('book', schema);

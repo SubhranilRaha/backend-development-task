@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { generateEmbedding } from '../utils/embedding-generator';
+import { EmbeddingModel } from '../models/embedding.model';
+import { models, modelSelector } from '../utils/model-selector';
+import { MovieModel } from '../models/movie.model';
 
 export const createEmbedding = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -12,6 +15,48 @@ export const createEmbedding = async (req: Request, res: Response, next: NextFun
             error: null,
             success: true,
             data: embedding
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            status: 500,
+            message: "Internal Server Error",
+            error: error,
+            success: false,
+            data: null
+        })
+    }
+}
+export const search = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { model, query } = req.body;
+        if (!model || !query) {
+            throw new Error("Model and query are required");
+        }
+        const queryVector = await generateEmbedding(query);
+        const results = await MovieModel.aggregate([
+            {
+                $vectorSearch: {
+                    "index": "vector_index",
+                    "path": "embedding",
+                    "queryVector": queryVector,
+                    "numCandidates": 100,
+                    "limit": 4
+                }
+            },
+            {
+                $project: {
+                    embedding: 0,
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            status: 200,
+            message: "Search completed",
+            error: null,
+            success: true,
+            data: results
         });
     } catch (error) {
         console.log(error)

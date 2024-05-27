@@ -7,7 +7,9 @@ const schema = new Schema({
     overview: { type: String },
     genre: [{ type: String }],
     vote_average: { type: Number },
-    vote_count: { type: Number }
+    vote_count: { type: Number },
+
+    embedding: { type: [Number] },
 },
     { timestamps: true });
 export type Movie = InferSchemaType<typeof schema>;
