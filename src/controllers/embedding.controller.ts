@@ -29,8 +29,8 @@ export const createEmbedding = async (req: Request, res: Response, next: NextFun
 }
 export const search = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { model, query } = req.body;
-        if (!model || !query) {
+        const { query } = req.body;
+        if (!query) {
             throw new Error("Model and query are required");
         }
         const queryVector = await generateEmbedding(query);
@@ -40,7 +40,7 @@ export const search = async (req: Request, res: Response, next: NextFunction) =>
                     "index": "vector_index",
                     "path": "embedding",
                     "queryVector": queryVector,
-                    "numCandidates": 100,
+                    "numCandidates": 500,
                     "limit": 4
                 }
             },
