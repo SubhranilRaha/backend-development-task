@@ -1,21 +1,12 @@
-
 import mongoose, { Schema, InferSchemaType } from 'mongoose';
-const allowedModels = ['book'];
-/* ISBN;"Book-Title";"Book-Author";"Year-Of-Publication";"Publisher";"Image-URL-S";"Image-URL-M";"Image-URL-L"
- */
 
-/* 0195153448;"Classical Mythology";"Mark P. O. Morford";"2002";"Oxford University Press";"http://images.amazon.com/images/P/0195153448.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0195153448.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0195153448.01.LZZZZZZZ.jpg"
- */
-const schema = new Schema({
-    isbn: { type: String },
-    title: { type: String },
-    author: { type: String },
-    year: { type: Number },
-    publisher: { type: String },
-    image_url_s: { type: String },
-    image_url_m: { type: String },
-    image_url_l: { type: String }
+const bookSchema = new Schema({
+    id: { type: Number, required: true },
+    title: { type: String, required: true },
+    author: { type: String, required: true },
+    text: { type: String, required: true },
+    embedding: { type: [Number] },
 },
     { timestamps: true });
-export type Book = InferSchemaType<typeof schema>;
-export const BookModel = mongoose.model('book', schema);
+export type Book = InferSchemaType<typeof bookSchema>;
+export const BookModel = mongoose.model('book', bookSchema);
