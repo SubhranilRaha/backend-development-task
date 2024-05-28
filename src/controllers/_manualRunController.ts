@@ -12,7 +12,11 @@ export const seedBooks = async () => {
     //save the data to the database
 
 }
-
+export const fetchBooks = async () => {
+    /* 
+    https://huggingface.co/datasets/stevez80/Sci-Fi-Books-gutenberg
+     */
+}
 export const fetchMovies = async () => {
     /* 
     https://huggingface.co/datasets/SandipPalit/Movie_Dataset
