@@ -2,14 +2,14 @@ require("dotenv").config();
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import { notificationRouter } from "./routes/notification";
-import { userRouter } from "./routes/user";
+import { notificationRouter } from "./routes/notification.router";
+import { userRouter } from "./routes/user.router";
 import { editController } from "./controllers/controller-builders/edit";
 import { editStreamController } from "./controllers/controller-builders/editStream";
 import { countController } from "./controllers/controller-builders/count";
 import { createController } from "./controllers/controller-builders/create";
-import { errorRouter } from "./routes/error";
-import { embeddingRouter } from "./routes/embeddingRouter";
+import { errorRouter } from "./routes/error.router";
+import { embeddingRouter } from "./routes/embedding.router";
 
 /* Setup */
 const app = express();
@@ -46,6 +46,6 @@ mongoose.connection.on("error", (error) => {
 });
 
 //manual controller
-import { seedBooks, fetchMovies, syncEmbeddings } from "./controllers/_manualRunController";
+import { seedBooks, fetchMovies, syncEmbeddings } from "./controllers/manual.controller";
 // fetchMovies();
 // syncEmbeddings();

@@ -1,4 +1,3 @@
-
 import mongoose, { Schema, InferSchemaType } from 'mongoose';
 
 const schema = new Schema({

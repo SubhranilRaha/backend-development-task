@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { generateEmbedding } from '../utils/embedding-generator';
-import { EmbeddingModel } from '../models/embedding.model';
-import { models, modelSelector } from '../utils/model-selector';
 import { MovieModel } from '../models/movie.model';
 
 export const createEmbedding = async (req: Request, res: Response, next: NextFunction) => {

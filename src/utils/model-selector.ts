@@ -1,7 +1,7 @@
 import { Model } from "mongoose";
-import ErrorModel, { IError } from "../models/error";
-import NotificationModel, { INotification } from "../models/notification";
-import UserModel, { IUser } from "../models/user";
+import ErrorModel, { IError } from "../models/error.model";
+import NotificationModel, { INotification } from "../models/notification.model";
+import UserModel, { IUser } from "../models/user.model";
 
 //models should be added here as they are being created to be supported in the route builders
 interface IModels{
