@@ -2,18 +2,21 @@ import { Model } from "mongoose";
 import ErrorModel, { IError } from "../models/error.model";
 import NotificationModel, { INotification } from "../models/notification.model";
 import UserModel, { IUser } from "../models/user.model";
+import BookModel, {  IBook } from "../models/book.model";
 
 //models should be added here as they are being created to be supported in the route builders
 interface IModels{
     user: Model<IUser>,
     notification: Model<INotification>,
-    error: Model<IError>
+    error: Model<IError>,
+    book: Model<IBook>,
 }
 
 export const models: IModels = {
     user: UserModel,
     notification: NotificationModel,
-    error: ErrorModel
+    error: ErrorModel,
+    book: BookModel,
 }
 
 //takes the model name and returns the instance of the mongoose model

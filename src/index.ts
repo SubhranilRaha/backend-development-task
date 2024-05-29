@@ -4,12 +4,13 @@ import express from "express";
 import mongoose from "mongoose";
 import { notificationRouter } from "./routes/notification.router";
 import { userRouter } from "./routes/user.router";
-import { editController } from "./controllers/controller-builders/edit";
-import { editStreamController } from "./controllers/controller-builders/editStream";
-import { countController } from "./controllers/controller-builders/count";
-import { createController } from "./controllers/controller-builders/create";
+import { editController } from "./controllers/controller-builders/edit.builder";
+import { editStreamController } from "./controllers/controller-builders/edit.stream.builder";
+import { countController } from "./controllers/controller-builders/count.builder";
+import { createController } from "./controllers/controller-builders/create.builder";
 import { errorRouter } from "./routes/error.router";
 import { embeddingRouter } from "./routes/embedding.router";
+import { vectorSearchController } from "./controllers/controller-builders/vector.search.builder";
 
 /* Setup */
 const app = express();
@@ -26,6 +27,7 @@ app.post("/api/:model/edit/", editController)
 app.post("/api/:model/edit-stream", editStreamController)
 app.post("/api/:model/count", countController)
 app.post("/api/:model/create", createController)
+app.post("/api/:model/vector-search", vectorSearchController)
 
 /* Custom Routes */
 app.use("/api/user", userRouter);
