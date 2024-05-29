@@ -243,7 +243,7 @@ export const fetchMovies = async () => {
 
 export const syncEmbeddings = async () => {
     try {
-        const limit = 10;
+        const limit = 100;
         const articles = await ArticleModel.find({
             embedding: { $exists: false }
         }).limit(limit).sort({

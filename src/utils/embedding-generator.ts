@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const HF_URL = process.env.HF_URL || "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2";
-export const HF_TOKEN = process.env.HF_TOKEN_2 || '';
+export const HF_TOKEN = process.env.HF_TOKEN_1 || '';
 
 export const generateEmbedding = async (text: string) => {
     try {
