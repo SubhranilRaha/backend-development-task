@@ -1,7 +1,13 @@
 
-import mongoose, { Schema, InferSchemaType } from 'mongoose';
+import { Schema, model, Document, Model } from 'mongoose';
 
-const schema = new Schema({
+export interface IArticle extends Document {
+    row_idx: number;
+    category: string;
+    text: string;
+    embedding: number[];
+}
+const ArticleSchema = new Schema<IArticle>({
     row_idx: { type: Number, required: true },
     category: { type: String, required: true },
     text: { type: String, required: true },
@@ -9,5 +15,6 @@ const schema = new Schema({
     embedding: { type: [Number] },
 },
     { timestamps: true });
-export type Article = InferSchemaType<typeof schema>;
-export const ArticleModel = mongoose.model('article', schema);
+
+const ArticleModel: Model<IArticle> = model<IArticle>('Article', ArticleSchema);
+export default ArticleModel;

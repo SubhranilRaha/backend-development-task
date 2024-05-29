@@ -5,7 +5,7 @@ import { MovieModel } from "../models/movie.model";
 import dayjs from 'dayjs';
 import { generateEmbedding } from "../utils/embedding-generator";
 import { EmbeddingModel } from "../models/embedding.model";
-import { ArticleModel } from "../models/article.model";
+import ArticleModel from "../models/article.model";
 export const seedBooks = async () => {
     //read the file books.csv
 
