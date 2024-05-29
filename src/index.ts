@@ -50,7 +50,7 @@ mongoose.connection.on("error", (error) => {
 //manual controller
 import { syncEmbeddings } from "./controllers/manual.controller";
 // fetchMovies();
-syncEmbeddings();
+// syncEmbeddings();
 // fetchNews();
 
 // cron.schedule("* * */1 * * *", syncEmbeddings, {
