@@ -1,82 +1,80 @@
-import { NextFunction, Request, Response } from "express";
-import { parse } from 'csv-parse';
-import { off } from "process";
-import { MovieModel } from "../models/movie.model";
-import dayjs from 'dayjs';
-import { generateEmbedding } from "../utils/embedding-generator";
-import { EmbeddingModel } from "../models/embedding.model";
+import dayjs from "dayjs";
 import ArticleModel from "../models/article.model";
+import { MovieModel } from "../models/movie.model";
+import { generateEmbedding } from "./../utils/embedding-generator";
 export const seedBooks = async () => {
-    //read the file books.csv
-
-    //parse the csv file
-    //save the data to the database
-
-}
+  //read the file books.csv
+  //parse the csv file
+  //save the data to the database
+};
 export const fetchNews = async () => {
-    /* https://huggingface.co/datasets/valurank/News_Articles_Categorization?row=8 */
-    let offset = 0;
-    const initialOffset = offset;
-    const length = 100;
-    let data = [] as any[];
-    const limit = 100;
+  /* https://huggingface.co/datasets/valurank/News_Articles_Categorization?row=8 */
+  let offset = 0;
+  const initialOffset = offset;
+  const length = 100;
+  let data = [] as any[];
+  const limit = 100;
 
-    while (offset < initialOffset + limit) {
-        const response = await fetch(`https://datasets-server.huggingface.co/rows?dataset=valurank%2FNews_Articles_Categorization&config=default&split=train&offset=${offset}&length=${length}`);
-        let json = await response.json();
-        if (!json || !json.features || !json.rows) {
-            console.log("Breaking out of loop", json)
-            break;
-        }
-        const fields = json.features.map((feature: any) => feature.name);
-
-        const dataset = json.rows.map((row: any, row_index: number) => {
-            return fields.reduce((acc: any, field: any, index: any) => {
-                const fieldSlug = field.toLowerCase().replace(/\s/g, "_");
-                acc[fieldSlug] = row.row[field];
-                acc['row_idx'] = row['row_idx']
-                return acc;
-            }, {});
-        });
-        data = data.concat(dataset);
-        offset += length;
+  while (offset < initialOffset + limit) {
+    const response = await fetch(
+      `https://datasets-server.huggingface.co/rows?dataset=valurank%2FNews_Articles_Categorization&config=default&split=train&offset=${offset}&length=${length}`
+    );
+    let json = await response.json();
+    if (!json || !json.features || !json.rows) {
+      console.log("Breaking out of loop", json);
+      break;
     }
-    console.log(offset, limit, data.length);
+    const fields = json.features.map((feature: any) => feature.name);
 
-    //save the data to the database
-    for (let i = 0; i < data.length; i++) {
-        const article = await ArticleModel.findOne({
-            row_idx: data[i].row_idx,
-        });
-        if (article) {
-            //update the movie
-            await ArticleModel.updateOne({
-                row_idx: data[i].row_idx
-            }, data[i]);
+    const dataset = json.rows.map((row: any, row_index: number) => {
+      return fields.reduce((acc: any, field: any, index: any) => {
+        const fieldSlug = field.toLowerCase().replace(/\s/g, "_");
+        acc[fieldSlug] = row.row[field];
+        acc["row_idx"] = row["row_idx"];
+        return acc;
+      }, {});
+    });
+    data = data.concat(dataset);
+    offset += length;
+  }
+  console.log(offset, limit, data.length);
 
-            console.log("Updated article")
-        } else {
-            //create the movie
-            await ArticleModel.create(data[i]);
-            console.log("Saved article")
-        }
+  //save the data to the database
+  for (let i = 0; i < data.length; i++) {
+    const article = await ArticleModel.findOne({
+      row_idx: data[i].row_idx,
+    });
+    if (article) {
+      //update the movie
+      await ArticleModel.updateOne(
+        {
+          row_idx: data[i].row_idx,
+        },
+        data[i]
+      );
+
+      console.log("Updated article");
+    } else {
+      //create the movie
+      await ArticleModel.create(data[i]);
+      console.log("Saved article");
     }
-
-}
+  }
+};
 export const fetchBooks = async () => {
-    /* 
+  /* 
     https://huggingface.co/datasets/stevez80/Sci-Fi-Books-gutenberg
      */
-}
+};
 export const fetchMovies = async () => {
-    /* 
+  /* 
     https://huggingface.co/datasets/SandipPalit/Movie_Dataset
     */
-    /*
+  /*
     https://datasets-server.huggingface.co/rows?dataset=SandipPalit%2FMovie_Dataset&config=default&split=train&offset=100&length=100
     */
 
-    /*
+  /*
     
     {
   features: [
@@ -194,75 +192,100 @@ export const fetchMovies = async () => {
   partial: false
 }*/
 
-    let offset = 11000;
-    const initialOffset = offset;
-    const length = 100;
-    let data = [] as any[];
-    const limit = 1000;
+  let offset = 11000;
+  const initialOffset = offset;
+  const length = 100;
+  let data = [] as any[];
+  const limit = 1000;
 
-    while (offset < initialOffset + limit) {
-        let response = await fetch(`https://datasets-server.huggingface.co/rows?dataset=SandipPalit%2FMovie_Dataset&config=default&split=train&offset=${offset}&length=${length}`);
-        let json = await response.json();
-        const fields = json.features.map((feature: any) => feature.name);
+  while (offset < initialOffset + limit) {
+    let response = await fetch(
+      `https://datasets-server.huggingface.co/rows?dataset=SandipPalit%2FMovie_Dataset&config=default&split=train&offset=${offset}&length=${length}`
+    );
+    let json = await response.json();
+    const fields = json.features.map((feature: any) => feature.name);
 
-        const dataset = json.rows.map((row: any) => {
-            return fields.reduce((acc: any, field: any, index: any) => {
-                const fieldSlug = field.toLowerCase().replace(/\s/g, "_");
-                acc[fieldSlug] = row.row[field];
-                return acc;
-            }, {});
-        });
-        data = data.concat(dataset);
-        offset += length;
-    }
-    console.log(offset, limit, data.length)
+    const dataset = json.rows.map((row: any) => {
+      return fields.reduce((acc: any, field: any, index: any) => {
+        const fieldSlug = field.toLowerCase().replace(/\s/g, "_");
+        acc[fieldSlug] = row.row[field];
+        return acc;
+      }, {});
+    });
+    data = data.concat(dataset);
+    offset += length;
+  }
+  console.log(offset, limit, data.length);
 
-    //save the data to the database
-    for (let i = 0; i < data.length; i++) {
-        //modify the data to convert the release date to a date object
-        data[i].release_date = dayjs(data[i].release_date, 'YYYY-MM-DD').toDate();
-        //modify the data to convert the genre string to an array of strings by parsing the string
-        if (data[i].genre) {
-            const jsonString = data[i].genre.replace(/'/g, '"');
-            data[i].genre = JSON.parse(jsonString);
-        }
-
-        const movie = await MovieModel.findOne({ title: data[i].title, release_date: data[i].release_date });
-        if (movie) {
-            //update the movie
-            await MovieModel.updateOne({ title: data[i].title, release_date: data[i].release_date }, data[i]);
-            console.log("Updated movie")
-        } else {
-            //create the movie
-            await MovieModel.create(data[i]);
-            console.log("Saved movie")
-        }
+  //save the data to the database
+  for (let i = 0; i < data.length; i++) {
+    //modify the data to convert the release date to a date object
+    data[i].release_date = dayjs(data[i].release_date, "YYYY-MM-DD").toDate();
+    //modify the data to convert the genre string to an array of strings by parsing the string
+    if (data[i].genre) {
+      const jsonString = data[i].genre.replace(/'/g, '"');
+      data[i].genre = JSON.parse(jsonString);
     }
 
+    const movie = await MovieModel.findOne({
+      title: data[i].title,
+      release_date: data[i].release_date,
+    });
+    if (movie) {
+      //update the movie
+      await MovieModel.updateOne(
+        { title: data[i].title, release_date: data[i].release_date },
+        data[i]
+      );
+      console.log("Updated movie");
+    } else {
+      //create the movie
+      await MovieModel.create(data[i]);
+      console.log("Saved movie");
+    }
+  }
 };
 
 export const syncEmbeddings = async () => {
-    try {
-        const limit = 100;
-        const articles = await ArticleModel.find({
-            embedding: { $exists: false }
-        }).limit(limit).sort({
-            createdAt: -1
+  try {
+    const limit = 100;
+    const tokens = [
+      process.env.HF_TOKEN_1,
+      process.env.HF_TOKEN_2,
+      process.env.HF_TOKEN_3,
+      process.env.HF_TOKEN_4,
+      process.env.HF_TOKEN_5,
+    ];
+
+    let tokenindex = 0;
+
+    for (let count = 0; count < tokens.length; count++) {
+      const articles = await ArticleModel.find({
+        embedding: { $exists: false },
+      })
+        .limit(limit)
+        .sort({
+          createdAt: -1,
         });
-        for (let i = 0; i < articles.length; i++) {
-            const article = articles[i];
-            if (article.text) {
-                const embedding = await generateEmbedding(article.text);
-                if (embedding) {
-                    article.embedding = embedding;
-                    await article.save();
-                    console.log("Article updated", article._id, article.row_idx)
-                }
-            } else {
-                console.log("IGNORING: Article text not found")
-            }
+      for (let i = 0; i < articles.length; i++) {
+        const hftoken = tokens[tokenindex];
+        console.log('token ', tokenindex)
+        console.log('article ', i)
+        const article = articles[i];
+        if (article.text) {
+          const embedding = await generateEmbedding(article.text, hftoken);
+          if (embedding) {
+            article.embedding = embedding;
+            await article.save();
+            console.log("Article updated", article._id, article.row_idx );
+          }
+        } else {
+          console.log("IGNORING: Article text not found");
         }
-    } catch (e) {
-        console.log(e)
+      }
+      tokenindex++;
     }
-}
+  } catch (e) {
+    console.log(e);
+  }
+};

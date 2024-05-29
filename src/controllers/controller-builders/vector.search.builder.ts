@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { generateEmbedding } from "../../utils/embedding-generator";
 import { modelSelector, models } from "../../utils/model-selector";
 
+const HF_TOKEN=process.env.HF_TOKEN;
+
 export const vectorSearchController = async (
   req: Request,
   res: Response,
@@ -11,7 +13,7 @@ export const vectorSearchController = async (
     if (!query) {
       throw new Error("Model and query are required");
     }
-    const queryVector = await generateEmbedding(query);
+    const queryVector = await generateEmbedding(query, HF_TOKEN);
     const { model } = req.params;
     const body = req.body;
     const Model = modelSelector(model as keyof typeof models);

@@ -2,7 +2,6 @@ require("dotenv").config();
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import cron from "node-cron"
 import { countController } from "./controllers/controller-builders/count.builder";
 import { createController } from "./controllers/controller-builders/create.builder";
 import { editController } from "./controllers/controller-builders/edit.builder";
@@ -12,7 +11,6 @@ import { embeddingRouter } from "./routes/embedding.router";
 import { errorRouter } from "./routes/error.router";
 import { notificationRouter } from "./routes/notification.router";
 import { userRouter } from "./routes/user.router";
-
 
 /* Setup */
 const app = express();
@@ -52,9 +50,8 @@ mongoose.connection.on("error", (error) => {
 //manual controller
 import { syncEmbeddings } from "./controllers/manual.controller";
 // fetchMovies();
-// syncEmbeddings();
+syncEmbeddings();
 // fetchNews();
-
 
 // cron.schedule("* * */1 * * *", syncEmbeddings, {
 //   timezone: "Asia/Kolkata",
