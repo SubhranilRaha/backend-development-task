@@ -1,8 +1,18 @@
+import { Document, Model, Schema, model } from "mongoose";
 
-import mongoose, { Schema, InferSchemaType } from 'mongoose';
-const allowedModels = ['book'];
+export interface IBook extends Document {
+  author: string;
+  country: string;
+  imageLink: string;
+  language: string;
+  link: string;
+  pages: number;
+  title: string;
+  year: number;
+}
 
-const schema = new Schema({
+const BookSchema = new Schema<IBook>(
+  {
     author: { type: String, required: true },
     country: { type: String, required: true },
     imageLink: { type: String, required: true },
@@ -11,7 +21,10 @@ const schema = new Schema({
     pages: { type: Number, required: true },
     title: { type: String, required: true },
     year: { type: Number, required: true },
-},
-    { timestamps: true });
-export type Book = InferSchemaType<typeof schema>;
-export const BookModel = mongoose.model('book', schema);
+  },
+  { timestamps: true }
+);
+
+const BookModel: Model<IBook> = model<IBook>("Book", BookSchema);
+
+export default BookModel;
