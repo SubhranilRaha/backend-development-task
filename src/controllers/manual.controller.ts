@@ -5,11 +5,62 @@ import { MovieModel } from "../models/movie.model";
 import dayjs from 'dayjs';
 import { generateEmbedding } from "../utils/embedding-generator";
 import { EmbeddingModel } from "../models/embedding.model";
+import { ArticleModel } from "../models/article.model";
 export const seedBooks = async () => {
     //read the file books.csv
 
     //parse the csv file
     //save the data to the database
+
+}
+export const fetchNews = async () => {
+    /* https://huggingface.co/datasets/valurank/News_Articles_Categorization?row=8 */
+    let offset = 0;
+    const initialOffset = offset;
+    const length = 100;
+    let data = [] as any[];
+    const limit = 100;
+
+    while (offset < initialOffset + limit) {
+        const response = await fetch(`https://datasets-server.huggingface.co/rows?dataset=valurank%2FNews_Articles_Categorization&config=default&split=train&offset=${offset}&length=${length}`);
+        let json = await response.json();
+        if (!json || !json.features || !json.rows) {
+            console.log("Breaking out of loop", json)
+            break;
+        }
+        const fields = json.features.map((feature: any) => feature.name);
+
+        const dataset = json.rows.map((row: any, row_index: number) => {
+            return fields.reduce((acc: any, field: any, index: any) => {
+                const fieldSlug = field.toLowerCase().replace(/\s/g, "_");
+                acc[fieldSlug] = row.row[field];
+                acc['row_idx'] = row['row_idx']
+                return acc;
+            }, {});
+        });
+        data = data.concat(dataset);
+        offset += length;
+    }
+    console.log(offset, limit, data.length);
+
+    //save the data to the database
+    for (let i = 0; i < data.length; i++) {
+        const article = await ArticleModel.findOne({
+            row_idx: data[i].row_idx,
+        });
+        if (article) {
+            //update the movie
+            await ArticleModel.updateOne({
+                row_idx: data[i].row_idx
+            }, data[i]);
+
+            console.log("Updated article")
+        } else {
+            //create the movie
+            await ArticleModel.create(data[i]);
+            console.log("Saved article")
+        }
+    }
 
 }
 export const fetchBooks = async () => {
@@ -192,31 +243,23 @@ export const fetchMovies = async () => {
 
 export const syncEmbeddings = async () => {
     try {
-        const limit = 200;
-        const movies = await MovieModel.find({
+        const limit = 10;
+        const articles = await ArticleModel.find({
             embedding: { $exists: false }
         }).limit(limit).sort({
             createdAt: -1
         });
-        for (let i = 0; i < movies.length; i++) {
-            const movie = movies[i];
-            if (movie.overview) {
-                const embedding = await generateEmbedding(movie.overview);
+        for (let i = 0; i < articles.length; i++) {
+            const article = articles[i];
+            if (article.text) {
+                const embedding = await generateEmbedding(article.text);
                 if (embedding) {
-                    movie.embedding = embedding;
-                    await movie.save();
-
-                    //create embedding for the movie in the embedding model as well
-                    const existingEmbedding = await EmbeddingModel.findOne({ model: 'movie', objectId: movie._id });
-                    if (existingEmbedding) {
-                        await EmbeddingModel.updateOne({ model: 'movie', objectId: movie._id }, { plot_embedding_hf: embedding });
-                    } else {
-                        await EmbeddingModel.create({ model: 'movie', objectId: movie._id, plot_embedding_hf: embedding });
-                    }
-                    console.log("Updated embedding for movie")
+                    article.embedding = embedding;
+                    await article.save();
+                    console.log("Article updated", article._id, article.row_idx)
                 }
             } else {
-                console.log("IGNORING: Movie overview not found")
+                console.log("IGNORING: Article text not found")
             }
         }
     } catch (e) {

@@ -46,6 +46,7 @@ mongoose.connection.on("error", (error) => {
 });
 
 //manual controller
-import { seedBooks, fetchMovies, syncEmbeddings } from "./controllers/manual.controller";
+import { seedBooks, fetchMovies, syncEmbeddings, fetchNews } from "./controllers/manual.controller";
 // fetchMovies();
-// syncEmbeddings();
+//syncEmbeddings();
+// fetchNews();
